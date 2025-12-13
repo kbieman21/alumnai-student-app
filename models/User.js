@@ -5,7 +5,8 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
   role: {
     type: String,
-    default: "user",
+    enum: ["learner", "tutor", "admin"],
+    required: true
   },
   githubId:{
     type:String,
@@ -27,7 +28,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8,
   },
-});
+},
+ { timestamps: true }
+);
 
 // Set up pre-save middleware to create password
 userSchema.pre("save", async function (next) {
@@ -36,7 +39,7 @@ userSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
 
-  //   next();
+   // next();
 });
 
 // Compare the incoming password with the hashed password
